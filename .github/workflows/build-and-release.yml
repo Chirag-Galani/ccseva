@@ -82,25 +82,25 @@ jobs:
           tag_name: v${{ steps.version.outputs.version }}-${{ github.run_number }}
           name: CCSeva v${{ steps.version.outputs.version }} (Apple Silicon)
           body: |
-            ## CCSeva v${{ steps.version.outputs.version }} - Apple Silicon Build
+            ## 🍎 Apple Silicon Build
 
-            ### Changes in this release:
-            - Updated token limits to current Claude plans (Pro: 44k, Max5: 88k, Max20: 220k)
-            - Fixed cache token calculation (cache tokens no longer counted in usage)
-            - Apple Silicon (M1/M2/M3) optimized build
+            **Version:** ${{ steps.version.outputs.version }}
+            **Build:** #${{ github.run_number }}
+            **Commit:** ${{ github.sha }}
 
-            ### Installation:
+            ### 📦 Installation
             1. Download `ccseva-apple-silicon-${{ steps.version.outputs.version }}.dmg`
             2. Open the DMG file
             3. Drag CCSeva to Applications
             4. Launch from Applications or Spotlight
 
-            ### System Requirements:
+            ### ⚙️ System Requirements
             - macOS 10.15 or later
-            - Apple Silicon (M1/M2/M3) Mac
+            - Apple Silicon (M1/M2/M3/M4) Mac
             - Claude Code installed and configured
 
-            Built from commit: ${{ github.sha }}
+            ---
+
           files: ./artifacts/*.dmg
           draft: false
           prerelease: false
