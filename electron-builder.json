@@ -14,7 +14,7 @@
     "target": [
       {
         "target": "dmg",
-        "arch": ["x64", "arm64"]
+        "arch": ["arm64"]
       }
     ],
     "hardenedRuntime": true,
@@ -31,7 +31,8 @@
   },
   "dmg": {
     "title": "CCSeva",
-    "icon": "assets/icon.icns"
+    "icon": "assets/icon.icns",
+    "artifactName": "ccseva-apple-silicon-${version}.${ext}"
   },
   "win": {
     "target": "nsis"

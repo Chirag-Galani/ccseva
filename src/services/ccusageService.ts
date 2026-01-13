@@ -90,7 +90,7 @@ export class CCUsageService {
   private currentPlan: 'Pro' | 'Max5' | 'Max20' | 'Custom' = 'Pro';
   // Custom token limit specified by the user when plan === 'Custom'
   private customTokenLimit: number | undefined = undefined;
-  private detectedTokenLimit = 7000;
+  private detectedTokenLimit = 44000;
   // Basis for cost shown in menu bar
   private menuBarCostSource: 'today' | 'sessionWindow' = 'today';
 
@@ -259,16 +259,16 @@ export class CCUsageService {
       // Process the daily data from ccusage, filtering out synthetic models
       processedDailyData = dailyData.map((day) => ({
         date: day.date,
-        totalTokens:
-          day.inputTokens + day.outputTokens + day.cacheCreationTokens + day.cacheReadTokens,
+        // Only count input and output tokens, exclude cache tokens
+        totalTokens: day.inputTokens + day.outputTokens,
         totalCost: day.totalCost,
         models: day.modelBreakdowns
           .filter((mb: ModelBreakdown) => mb.modelName !== '<synthetic>')
           .reduce(
             (acc: { [key: string]: { tokens: number; cost: number } }, mb: ModelBreakdown) => {
               acc[mb.modelName] = {
-                tokens:
-                  mb.inputTokens + mb.outputTokens + mb.cacheCreationTokens + mb.cacheReadTokens,
+                // Only count input and output tokens, exclude cache tokens
+                tokens: mb.inputTokens + mb.outputTokens,
                 cost: mb.cost,
               };
               return acc;
@@ -337,16 +337,12 @@ export class CCUsageService {
   }
 
   /**
-   * Get total tokens from a session block
+   * Get total tokens from a session block (excluding cache tokens)
    */
   private getTotalTokensFromBlock(block: SessionBlock): number {
     const counts = block.tokenCounts;
-    return (
-      counts.inputTokens +
-      counts.outputTokens +
-      counts.cacheCreationInputTokens +
-      counts.cacheReadInputTokens
-    );
+    // Only count input and output tokens, exclude cache tokens
+    return counts.inputTokens + counts.outputTokens;
   }
 
   /**
@@ -365,7 +361,7 @@ export class CCUsageService {
     }
 
     // Return the highest found, or default to pro if none found
-    return maxTokens > 0 ? maxTokens : 7000;
+    return maxTokens > 0 ? maxTokens : 44000;
   }
 
   /**
@@ -544,7 +540,7 @@ export class CCUsageService {
   private getMockStats(): UsageStats {
     const today = new Date().toISOString().split('T')[0];
     const tokensUsed = 4200;
-    const tokenLimit = 7000;
+    const tokenLimit = 44000;
     const todayCost = 2.45;
     const burnRate = 35;
 
@@ -654,20 +650,20 @@ export class CCUsageService {
   }
 
   private detectPlan(totalTokens: number): 'Pro' | 'Max5' | 'Max20' | 'Custom' {
-    if (totalTokens <= 7000) return 'Pro';
-    if (totalTokens <= 35000) return 'Max5';
-    if (totalTokens <= 140000) return 'Max20';
+    if (totalTokens <= 44000) return 'Pro';
+    if (totalTokens <= 88000) return 'Max5';
+    if (totalTokens <= 220000) return 'Max20';
     return 'Custom';
   }
 
   private getTokenLimit(plan: string): number {
     switch (plan) {
       case 'Pro':
-        return 7000;
+        return 44000;
       case 'Max5':
-        return 35000;
+        return 88000;
       case 'Max20':
-        return 140000;
+        return 220000;
       default:
         return 500000; // Custom high limit
     }
@@ -720,10 +716,8 @@ export class CCUsageService {
     if (!models[modelName]) {
       models[modelName] = { tokens: 0, cost: 0 };
     }
-    models[modelName].tokens +=
-      (breakdown.inputTokens || 0) +
-      (breakdown.outputTokens || 0) +
-      (breakdown.cacheCreationTokens || 0);
+    // Only count input and output tokens, exclude cache tokens
+    models[modelName].tokens += (breakdown.inputTokens || 0) + (breakdown.outputTokens || 0);
     models[modelName].cost += breakdown.cost || 0;
   }
 
@@ -737,9 +731,8 @@ export class CCUsageService {
 
       const dayData = data.filter((item) => item.date === dateStr);
       const totalTokens = dayData.reduce((sum, item) => {
-        return (
-          sum + (item.inputTokens || 0) + (item.outputTokens || 0) + (item.cacheCreationTokens || 0)
-        );
+        // Only count input and output tokens, exclude cache tokens
+        return sum + (item.inputTokens || 0) + (item.outputTokens || 0);
       }, 0);
       const totalCost = dayData.reduce((sum, item) => {
         return sum + (item.totalCost || item.cost || 0);
@@ -827,9 +820,8 @@ export class CCUsageService {
     });
 
     const totalTokens = last24Hours.reduce((sum, item) => {
-      return (
-        sum + (item.inputTokens || 0) + (item.outputTokens || 0) + (item.cacheCreationTokens || 0)
-      );
+      // Only count input and output tokens, exclude cache tokens
+      return sum + (item.inputTokens || 0) + (item.outputTokens || 0);
     }, 0);
     return Math.round(totalTokens / 24); // tokens per hour
   }
@@ -943,9 +935,8 @@ export class CCUsageService {
     if (data.length === 0) return 0;
 
     const totalTokens = data.reduce((sum, item) => {
-      return (
-        sum + (item.inputTokens || 0) + (item.outputTokens || 0) + (item.cacheCreationTokens || 0)
-      );
+      // Only count input and output tokens, exclude cache tokens
+      return sum + (item.inputTokens || 0) + (item.outputTokens || 0);
     }, 0);
 
     const totalHours = data.length * 24; // Assuming daily data points

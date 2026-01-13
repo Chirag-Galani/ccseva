@@ -291,12 +291,8 @@ export class SessionTracker {
    */
   private getTotalTokensFromBlock(block: CCUsageBlock): number {
     const counts = block.tokenCounts || {};
-    return (
-      (counts.inputTokens || 0) +
-      (counts.outputTokens || 0) +
-      (counts.cacheCreationInputTokens || 0) +
-      (counts.cacheReadInputTokens || 0)
-    );
+    // Only count input and output tokens, exclude cache tokens
+    return (counts.inputTokens || 0) + (counts.outputTokens || 0);
   }
 
   /**
