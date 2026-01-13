@@ -35,6 +35,7 @@ jobs:
         run: npm run dist:mac
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CSC_IDENTITY_AUTO_DISCOVERY: false
 
       - name: Get version from package.json
         id: version
@@ -91,8 +92,23 @@ jobs:
             ### 📦 Installation
             1. Download `ccseva-apple-silicon-${{ steps.version.outputs.version }}.dmg`
             2. Open the DMG file
-            3. Drag CCSeva to Applications
-            4. Launch from Applications or Spotlight
+            3. Drag CCSeva to Applications folder
+
+            ### ⚠️ First Launch - Bypass Gatekeeper
+            macOS will show "CCSeva is damaged" because the app is not signed with an Apple Developer certificate.
+
+            **Option 1: Terminal Command (Recommended)**
+            ```bash
+            xattr -cr /Applications/CCSeva.app
+            ```
+
+            **Option 2: System Settings**
+            1. Try to open CCSeva (it will be blocked)
+            2. Go to System Settings → Privacy & Security
+            3. Scroll down and click "Open Anyway" next to CCSeva
+            4. Click "Open" in the confirmation dialog
+
+            After this one-time step, CCSeva will launch normally.
 
             ### ⚙️ System Requirements
             - macOS 10.15 or later
