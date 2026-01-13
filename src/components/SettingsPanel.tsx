@@ -159,9 +159,9 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="auto">Auto-detect</SelectItem>
-                    <SelectItem value="Pro">Claude Pro (7,000 tokens/day)</SelectItem>
-                    <SelectItem value="Max5">Claude Max5 (35,000 tokens/day)</SelectItem>
-                    <SelectItem value="Max20">Claude Max20 (140,000 tokens/day)</SelectItem>
+                    <SelectItem value="Pro">Claude Pro (44,000 tokens/session)</SelectItem>
+                    <SelectItem value="Max5">Claude Max5 (88,000 tokens/session)</SelectItem>
+                    <SelectItem value="Max20">Claude Max20 (220,000 tokens/session)</SelectItem>
                     <SelectItem value="Custom">Custom</SelectItem>
                   </SelectContent>
                 </Select>
